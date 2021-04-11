@@ -21,12 +21,15 @@ if __name__ == '__main__':
 
     done = False
 
+    Grid.create_board(screen)
+    Grid.show_pieces(screen, Board, my_font)
+
     while not done:
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                Board = PieceController.process_click(Board, screen, my_font)
             if event.type == pygame.QUIT:
                 done = True
-        Grid.create_board(screen)
-        Grid.show_pieces(screen, Board, my_font)
         pygame.display.flip()
 
 
