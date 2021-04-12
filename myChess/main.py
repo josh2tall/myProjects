@@ -10,7 +10,8 @@ import constants
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    pygame.init()
+    pygame.font.init()
+    pygame.display.init()
     my_font = pygame.font.SysFont('arial', 30)
 
     Board = PieceController.create_pieces()
@@ -23,6 +24,8 @@ if __name__ == '__main__':
 
     Grid.create_board(screen)
     Grid.show_pieces(screen, Board, my_font)
+    pygame.display.set_caption('Turn: White')
+    pygame.display.flip()
 
     while not done:
         for event in pygame.event.get():
@@ -30,7 +33,5 @@ if __name__ == '__main__':
                 Board = PieceController.process_click(Board, screen, my_font)
             if event.type == pygame.QUIT:
                 done = True
-        pygame.display.flip()
-
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

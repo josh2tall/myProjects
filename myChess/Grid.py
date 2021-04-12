@@ -5,11 +5,11 @@ def create_board(board):
     # draw dark first
     for x_pos in range(constants.NUM_SQUARES_PER_ROW + 1):
         for y_pos in range(constants.NUM_SQUARES_PER_ROW + 1):
-            color = constants.GREEN
+            color = constants.DARK
             if x_pos % 2 == 0 and y_pos % 2 != 0:
-                color = constants.BLUE
+                color = constants.LIGHT
             elif x_pos % 2 != 0 and y_pos % 2 == 0:
-                color = constants.BLUE
+                color = constants.LIGHT
             x_coord = (x_pos - 1) * constants.BLOCK_SIZE
             y_coord = (y_pos - 1) * constants.BLOCK_SIZE
             pygame.draw.rect(board, color, pygame.Rect(x_coord, y_coord, constants.BLOCK_SIZE, constants.BLOCK_SIZE))
@@ -34,28 +34,25 @@ def determine_block_click(pos, board):
 
     info.append(block_column)
     info.append(block_row)
-    info.append(board[block_column][block_row])
 
     print("clicked: column: ", block_column, ", row: ", block_row, ", contains: ", board[block_column][block_row])
     return info
 
 def highlight_block(x_block, y_block, board, screen):
     coord = convert_row_column_to_coord(x_block, y_block)
-    color = constants.BLUE
-    print(x_block, y_block, coord)
+    color = constants.LIGHT
     current_color = screen.get_at((coord[0], coord[1]))
-    if current_color[0] == constants.BLUE[0] and current_color[2] == constants.BLUE[2]:
-        color = constants.HIGHLIGHTED_BLUE
-        print("changing to highlighted blue")
-    elif current_color[0] == constants.GREEN[0] and current_color[2] == constants.GREEN[2]:
-        color = constants.HIGHLIGHTED_GREEN
-        print("changing to highlighted green")
-    elif current_color[0] == constants.HIGHLIGHTED_GREEN[0] and current_color[2] == constants.HIGHLIGHTED_GREEN[2]:
-        color = constants.GREEN
-        print("changing to green")
+    if current_color[0] == constants.LIGHT[0] and current_color[1] == constants.LIGHT[1]\
+            and current_color[2] == constants.LIGHT[2]:
+        color = constants.HIGHLIGHTED_DARK
+    elif current_color[0] == constants.DARK[0] and current_color[2] == constants.DARK[2]\
+            and current_color[2] == constants.DARK[2]:
+        color = constants.HIGHLIGHTED_LIGHT
+    elif current_color[0] == constants.HIGHLIGHTED_LIGHT[0] and current_color[1] == constants.HIGHLIGHTED_LIGHT[1]\
+            and current_color[2] == constants.HIGHLIGHTED_LIGHT[2]:
+        color = constants.DARK
     else:
-        color = constants.BLUE
-        print("changing to blue")
+        color = constants.LIGHT
 
     pygame.draw.rect(screen, color, pygame.Rect(coord[0], coord[1], constants.BLOCK_SIZE, constants.BLOCK_SIZE))
 
@@ -66,9 +63,6 @@ def create_single_piece(row, column, board, text_module, screen):
     text_width = text_surface.get_rect().width
     x_coord = constants.SQUARE_SIZE * column + constants.SQUARE_SIZE / 2 - text_height / 2
     y_coord = constants.SQUARE_SIZE * row + constants.SQUARE_SIZE / 2 - text_width / 2
-    print(board[row][column])
-    print("x coord: ", x_coord)
-    print("y coord: ", y_coord)
     screen.blit(text_surface, (y_coord, x_coord))
 
 def convert_row_column_to_coord(row, column):
