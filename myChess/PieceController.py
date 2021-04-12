@@ -1,6 +1,7 @@
 import constants
 import pygame
 import Grid
+import Validity
 
 is_white_turn = True
 last_click = [-1, -1]
@@ -73,31 +74,26 @@ def move_piece(last_move, new_move, board):
 
     return board
 
-def process_click(board, screen, font):
+def process_click(board, screen, font_module):
     global last_click
     global is_white_turn
     pos = pygame.mouse.get_pos()
     new_move = Grid.determine_block_click(pos, board)
 
     print("is it white's turn: ", is_white_turn)
-    is_valid_move = determine_move_validity(last_click, new_move, board)
-    can_select_piece = determine_piece_validity(new_move, board)
+    is_valid_move = Validity.determine_move_validity(last_click, new_move, board, is_white_turn)
+    can_select_piece = Validity.determine_piece_validity(new_move, board, is_white_turn)
     if last_click[0] == new_move[0] and last_click[1] == new_move[1]:
         last_click = [-1, -1]
         Grid.highlight_block(new_move[0], new_move[1], board, screen)
-        Grid.create_single_piece(new_move[0], new_move[1], board, font, screen)
+        Grid.create_single_piece(new_move[0], new_move[1], board, font_module, screen)
     elif last_click[0] >= 0 and last_click[1] >= 0:
         # move last click to detailed info
         if is_valid_move:
             board = move_piece(last_click, new_move, board)
-            is_white_turn = not is_white_turn
-            if is_white_turn:
-                pygame.display.set_caption('Turn: White')
-            else:
-                pygame.display.set_caption('Turn: Black')
+            update_turn()
 
-        Grid.create_board(screen)
-        Grid.show_pieces(screen, board, font)
+        Grid.refresh_board(screen, board, font_module)
         last_click[0] = -1
         last_click[1] = -1
     elif board[new_move[0]][new_move[1]] != 'e' and can_select_piece:
@@ -106,78 +102,15 @@ def process_click(board, screen, font):
         x_block = last_click[0]
         y_block = last_click[1]
         Grid.highlight_block(x_block, y_block, board, screen)
-        Grid.create_single_piece(x_block, y_block, board, font, screen)
+        Grid.create_single_piece(x_block, y_block, board, font_module, screen)
 
     pygame.display.flip()
     return board
 
-def determine_move_validity(source_block, destination_block, board):
-    destination_piece = board[destination_block[0]][destination_block[1]]
-    current_piece = board[source_block[0]][source_block[1]]
-    validity = True
-
-    if destination_piece != 'e':
-        if is_white_turn and destination_piece.isupper():
-            validity = False
-        elif not is_white_turn and destination_piece.islower():
-            validity = False
-
-    if current_piece == 'k' or current_piece == 'K':
-        valid_moves = get_king_valid_moves(source_block)
-        print("destination", destination_block)
-        if (destination_block[0], destination_block[1]) not in valid_moves:
-            validity = False
-            print("move is not in list of valid moves.")
-
-    return validity
-
-def determine_piece_validity(new_move, board):
-    validity = True
-    piece = board[new_move[0]][new_move[1]]
-
-    if piece.isupper() and not is_white_turn or piece.islower() and is_white_turn:
-        validity = False
-
-    return validity
-
-def get_king_valid_moves(current_pos):
-    valid_moves = []
-
-    column = 0
-    row = 1
-
-    # check top left
-    if current_pos[column] - 1 >= 0 and current_pos[row] - 1 >= 0:
-        valid_moves.append((current_pos[column] - 1, current_pos[row] - 1))
-
-    # check top
-    if current_pos[row] - 1 >= 0:
-        valid_moves.append((current_pos[column], current_pos[row] - 1))
-
-    # check top right
-    if current_pos[column] + 1 <= constants.NUM_SQUARES_PER_ROW - 1 and current_pos[row] - 1 >= 0:
-        valid_moves.append((current_pos[column] + 1, current_pos[row] - 1))
-
-    # check right
-    if current_pos[column] + 1 <= constants.NUM_SQUARES_PER_ROW - 1:
-        valid_moves.append((current_pos[column] + 1, current_pos[row]))
-
-    # check bottom right
-    if current_pos[column] + 1 <= constants.NUM_SQUARES_PER_ROW - 1 and \
-       current_pos[row] + 1 <= constants.NUM_SQUARES_PER_ROW - 1:
-        valid_moves.append((current_pos[column] + 1, current_pos[row] + 1))
-
-    # check bottom
-    if current_pos[row] + 1 <= constants.NUM_SQUARES_PER_ROW - 1:
-        valid_moves.append((current_pos[column], current_pos[row] + 1))
-
-    # check bottom left
-    if current_pos[column] - 1 >= 0 and current_pos[row] + 1 <= constants.NUM_SQUARES_PER_ROW - 1:
-        valid_moves.append((current_pos[column] - 1, current_pos[row] + 1))
-
-    # check left
-    if current_pos[column] - 1 >= 0:
-        valid_moves.append((current_pos[column] - 1, current_pos[row]))
-
-    print("valid_moves", valid_moves)
-    return valid_moves
+def update_turn():
+    global is_white_turn
+    is_white_turn = not is_white_turn
+    if is_white_turn:
+        pygame.display.set_caption('Turn: White')
+    else:
+        pygame.display.set_caption('Turn: Black')

@@ -76,3 +76,7 @@ def convert_coord_to_row_column(x_coord, y_coord):
     column = int(y_coord / constants.BLOCK_SIZE)
 
     return row, column
+
+def refresh_board(screen, board, font_module):
+    create_board(screen)
+    show_pieces(screen, board, font_module)
