@@ -77,25 +77,23 @@ def move_piece(last_move, new_move, board):
 def process_click(board, screen, font_module):
     global last_click
     global is_white_turn
-    pos = pygame.mouse.get_pos()
-    new_move = Grid.determine_block_click(pos, board)
+    new_move = Grid.determine_block_click(board)
 
     print("is it white's turn: ", is_white_turn)
-    is_valid_move = Validity.determine_move_validity(last_click, new_move, board, is_white_turn)
     can_select_piece = Validity.determine_piece_validity(new_move, board, is_white_turn)
     if last_click[0] == new_move[0] and last_click[1] == new_move[1]:
-        last_click = [-1, -1]
+        reset_last_click()
         Grid.highlight_block(new_move[0], new_move[1], board, screen)
         Grid.create_single_piece(new_move[0], new_move[1], board, font_module, screen)
     elif last_click[0] >= 0 and last_click[1] >= 0:
         # move last click to detailed info
+        is_valid_move = Validity.determine_move_validity(last_click, new_move, board, is_white_turn)
         if is_valid_move:
             board = move_piece(last_click, new_move, board)
             update_turn()
 
         Grid.refresh_board(screen, board, font_module)
-        last_click[0] = -1
-        last_click[1] = -1
+        reset_last_click()
     elif board[new_move[0]][new_move[1]] != 'e' and can_select_piece:
         last_click[0] = new_move[0]
         last_click[1] = new_move[1]
@@ -114,3 +112,8 @@ def update_turn():
         pygame.display.set_caption('Turn: White')
     else:
         pygame.display.set_caption('Turn: Black')
+
+def reset_last_click():
+    global last_click
+    last_click[0] = -1
+    last_click[1] = -1

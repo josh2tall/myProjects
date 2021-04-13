@@ -10,10 +10,11 @@ def create_board(board):
                 color = constants.LIGHT
             elif x_pos % 2 != 0 and y_pos % 2 == 0:
                 color = constants.LIGHT
-            x_coord = (x_pos - 1) * constants.BLOCK_SIZE
-            y_coord = (y_pos - 1) * constants.BLOCK_SIZE
+            x_coord, y_coord = calculate_square_coordinates(x_pos, y_pos)
             pygame.draw.rect(board, color, pygame.Rect(x_coord, y_coord, constants.BLOCK_SIZE, constants.BLOCK_SIZE))
 
+def calculate_square_coordinates(coordinate_x, coordinate_y):
+    return (coordinate_x - 1) * constants.BLOCK_SIZE, (coordinate_y - 1) * constants.BLOCK_SIZE
 
 def show_pieces(board, current_locations, text_module):
     for row in range(constants.NUM_SQUARES_PER_ROW):
@@ -22,13 +23,16 @@ def show_pieces(board, current_locations, text_module):
                 text_surface = text_module.render(current_locations[column][row], False, (0, 0, 0))
                 text_height = text_surface.get_rect().height
                 text_width = text_surface.get_rect().width
-                x_coord = constants.SQUARE_SIZE * row + constants.SQUARE_SIZE / 2 - text_height / 2
-                y_coord = constants.SQUARE_SIZE * column + constants.SQUARE_SIZE / 2 - text_width / 2
+                x_coord, y_coord = calculate_piece_coordinates(row, column, text_height, text_width)
                 board.blit(text_surface, (y_coord, x_coord))
 
+def calculate_piece_coordinates(row, column, text_height, text_width):
+    return constants.SQUARE_SIZE * row + constants.SQUARE_SIZE / 2 - text_height / 2, \
+           constants.SQUARE_SIZE * column + constants.SQUARE_SIZE / 2 - text_width / 2
 
-def determine_block_click(pos, board):
+def determine_block_click(board):
     info = []
+    pos = pygame.mouse.get_pos()
     block_column = int(pos[0] / constants.SQUARE_SIZE)
     block_row = int(pos[1] / constants.SQUARE_SIZE)
 
