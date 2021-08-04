@@ -2,6 +2,8 @@
 //  main.c
 //  UniqueCharacters
 //
+//  Checks if all the characters in the "test" string are unique
+//
 //  Created by Joshua Acosta on 8/3/21.
 //
 
