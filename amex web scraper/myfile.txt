@@ -1,0 +1,30 @@
+merchantName:Ereplacementparts.com  merchantWebsite:ereplacementparts.com
+merchantName:Hopper inc.  merchantWebsite:www.hopper.com/
+merchantName:Evite, inc.  merchantWebsite:www.evite.com
+merchantName:Dashlane  merchantWebsite:www.dashlane.com/
+merchantName:Costumes galore  merchantWebsite:www.costumesgalore.net
+merchantName:Backerkit  merchantWebsite:backerkit.com
+merchantName:Tophatmonocle (us) corp.  merchantWebsite:tophat.com
+merchantName:Tarte  merchantWebsite:www.tartecosmetics.com
+merchantName:World pantry.com  merchantWebsite:worldpantry.com
+merchantName:Stella  merchantWebsite:www.stelladot.com/
+merchantName:Prezi  merchantWebsite:prezi.com/
+merchantName:Discount dance  merchantWebsite:www.discountdance.com
+merchantName:Moduslink  merchantWebsite:www.moduslink.com/
+merchantName:1a auto  merchantWebsite:www.1aauto.com/about/contact_us
+merchantName:Gamechanger media  merchantWebsite:www.gc.com
+merchantName:Our campus market  merchantWebsite:www.ocm.com/
+merchantName:Subaru of america  merchantWebsite:www.subaru.com
+merchantName:Younique  merchantWebsite:www.youniqueproducts.com/buytracy
+merchantName:Coolibar  merchantWebsite:www.coolibar.com
+merchantName:Luminessair.com  merchantWebsite:www.luminessair.com/
+merchantName:Jungle scout  merchantWebsite:www.junglescout.com/
+merchantName:The pajamagram co  merchantWebsite:pajamagram.com
+merchantName:Levenger 800-545-0242  merchantWebsite:www.levenger.com
+merchantName:The neat company  merchantWebsite:www.neat.com/
+merchantName:Herroom/hisroom.com  merchantWebsite:www.herroom.com/
+merchantName:Sodastream usa  merchantWebsite:www.sodastream.com
+merchantName:Nuvet labs  merchantWebsite:www.nuvet.com
+merchantName:Worx yard tools  merchantWebsite:www.worx.com/
+merchantName:Pdffiller inc.  merchantWebsite:www.pdffiller.com/
+merchantName:Touchstone crystal  merchantWebsite:touchstonecrystal.com/regional/home
