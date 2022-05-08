@@ -1,3 +1,7 @@
+# The goal of this script is to go through the american express shop small website and get the 
+# company names and websites and store them in a sqllite database
+
+
 import sqlite3
 from selenium.webdriver import Safari
 from selenium.webdriver.safari.options import Options
