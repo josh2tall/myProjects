@@ -10,27 +10,44 @@
 #include <stdlib.h>
 #include <time.h>
 
-const int MAP_SIZE = 11;
-char currentDirection = 'N';
-char gameProgress = 'P';
+const int MAP_LENGTH = 11;
+const int MAP_SIZE = MAP_LENGTH * MAP_LENGTH;
+const int winningLength = 3;
+const int snakeHeadPosition = 0;
+const int startingSnakeLength = 1;
+const int snakePositionsLength = winningLength + 1;
 
 const char snakeHead = '^';
 const char emptySpace = '_';
 const char food = '$';
 const char snakeBody = ';';
 
-int snakeLength = 1;
-const int winningLength = 3;
+char currentDirection = 'N';
+char gameProgress = 'P';
 
-int snakePositions[winningLength + 1];
-int snakePositionLength = 1;
-const int snakeHeadPosition = 0;
+int snakeLength = startingSnakeLength;
+int snakePositions[snakePositionsLength];
 
+
+void resetGame(char * map){
+    //clear map
+    for(int i = 0; i < MAP_SIZE; i++){
+        map[i] = emptySpace;
+    }
+    
+    gameProgress = 'P';
+    snakeLength = startingSnakeLength;
+    
+    snakePositions[snakeHeadPosition] = MAP_SIZE / 2;
+    for(int i = 1; i < snakePositionsLength; i++){
+        snakePositions[i] = emptySpace;
+    }
+}
 
 char * createMap(void){
-    char * Map = (char*) malloc(MAP_SIZE * MAP_SIZE * sizeof(char));
+    char * Map = (char*) malloc(MAP_SIZE * sizeof(char));
     
-    for(int i = 0; i < MAP_SIZE * MAP_SIZE; i++){
+    for(int i = 0; i < MAP_SIZE; i++){
         Map[i] = emptySpace;
     }
     
@@ -38,8 +55,8 @@ char * createMap(void){
 }
 
 void addSnakeHead(char * map){
-    map[MAP_SIZE * MAP_SIZE / 2] = snakeHead;
-    snakePositions[snakeHeadPosition] = MAP_SIZE * MAP_SIZE / 2;
+    map[MAP_SIZE / 2] = snakeHead;
+    snakePositions[snakeHeadPosition] = MAP_SIZE / 2;
 }
 
 void addRandomFood(char * map){
@@ -47,7 +64,7 @@ void addRandomFood(char * map){
     
     while(tryAgain){
         int num = (rand() %
-                   ((MAP_SIZE * MAP_SIZE)));
+                   ((MAP_SIZE)));
         if(map[num] == emptySpace){
             map[num] = food;
             tryAgain = false;
@@ -56,15 +73,15 @@ void addRandomFood(char * map){
 }
 
 void renderScreen(char * currentMap){
-    for(int i = 0; i < MAP_SIZE * MAP_SIZE; i++){
-        if(i%MAP_SIZE == 0){
+    for(int i = 0; i < MAP_SIZE; i++){
+        if(i%MAP_LENGTH == 0){
             printf("|");
         }
         
         char temp = currentMap[i];
         printf("%-1c", temp);
         
-        if(i%MAP_SIZE == MAP_SIZE - 1){
+        if(i%MAP_LENGTH == MAP_LENGTH - 1){
             printf("|\r\n");
         }
         
@@ -83,28 +100,28 @@ void step(char * map){
     int oldSnakeLocation = snakePositions[snakeHeadPosition];
     int newSnakeLocation = oldSnakeLocation;
     
-    if(oldSnakeLocation < 0 && oldSnakeLocation >= MAP_SIZE * MAP_SIZE){
+    if(oldSnakeLocation < 0 && oldSnakeLocation >= MAP_SIZE){
         gameProgress = 'L';
     } else if(currentDirection == 'N'){
-        if(oldSnakeLocation - MAP_SIZE >= 0){
-            newSnakeLocation -= MAP_SIZE;
+        if(oldSnakeLocation - MAP_LENGTH >= 0){
+            newSnakeLocation -= MAP_LENGTH;
         } else {
             gameProgress = 'L';
         }
     } else if(currentDirection == 'S'){
-        if(oldSnakeLocation + MAP_SIZE < MAP_SIZE * MAP_SIZE){
-            newSnakeLocation += MAP_SIZE;
+        if(oldSnakeLocation + MAP_LENGTH < MAP_SIZE){
+            newSnakeLocation += MAP_LENGTH;
         } else {
             gameProgress = 'L';
         }
     } else if(currentDirection == 'W'){
-        if(oldSnakeLocation%MAP_SIZE - 1 >= 0){
+        if(oldSnakeLocation%MAP_LENGTH - 1 >= 0){
             newSnakeLocation -= 1;
         } else {
             gameProgress = 'L';
         }
     } else if(currentDirection == 'E'){
-        if(oldSnakeLocation%MAP_SIZE + 1 < MAP_SIZE){
+        if(oldSnakeLocation%MAP_LENGTH + 1 < MAP_LENGTH){
             newSnakeLocation += 1;
         } else {
             gameProgress = 'L';
@@ -116,7 +133,7 @@ void step(char * map){
         if(newLocation == emptySpace){
             int temp1 = newSnakeLocation;
             int temp2;
-            for(int i = 0; i < snakePositionLength; i++){
+            for(int i = 0; i < snakeLength; i++){
                 // +1 for head
                 temp2 = snakePositions[i];
                 map[temp2] = emptySpace;
@@ -132,7 +149,7 @@ void step(char * map){
         else if(newLocation == food){
             int temp1 = newSnakeLocation;
             int temp2;
-            for(int i = 0; i < snakePositionLength + 1; i++){
+            for(int i = 0; i < snakeLength + 1; i++){
                 // +1 for head
                 temp2 = snakePositions[i];
                 map[temp2] = emptySpace;
@@ -145,7 +162,6 @@ void step(char * map){
                 temp1 = temp2;
             }
             addRandomFood(map);
-            snakePositionLength++;
             snakeLength++;
         }
     }
