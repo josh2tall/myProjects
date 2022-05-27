@@ -145,8 +145,7 @@ void step(char * map){
                 }
                 temp1 = temp2;
             }
-        }
-        else if(newLocation == food){
+        } else if(newLocation == food){
             int temp1 = newSnakeLocation;
             int temp2;
             for(int i = 0; i < snakeLength + 1; i++){
@@ -163,6 +162,8 @@ void step(char * map){
             }
             addRandomFood(map);
             snakeLength++;
+        } else if(newLocation == snakeBody){
+            gameProgress = 'L';
         }
     }
     
