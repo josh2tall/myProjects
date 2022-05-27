@@ -14,19 +14,32 @@ const int MAP_SIZE = 11;
 char currentDirection = 'N';
 char gameProgress = 'P';
 
+const char snakeHead = '^';
+const char emptySpace = '_';
+const char food = '$';
+const char snakeBody = ';';
+
+int snakeLength = 1;
+const int winningLength = 3;
+
+int snakePositions[winningLength + 1];
+int snakePositionLength = 1;
+const int snakeHeadPosition = 0;
+
+
 char * createMap(void){
     char * Map = (char*) malloc(MAP_SIZE * MAP_SIZE * sizeof(char));
     
     for(int i = 0; i < MAP_SIZE * MAP_SIZE; i++){
-        char temp = '_';
-        Map[i] = temp;
+        Map[i] = emptySpace;
     }
     
     return Map;
 }
 
 void addSnakeHead(char * map){
-    map[MAP_SIZE * MAP_SIZE / 2] = '^';
+    map[MAP_SIZE * MAP_SIZE / 2] = snakeHead;
+    snakePositions[snakeHeadPosition] = MAP_SIZE * MAP_SIZE / 2;
 }
 
 void addRandomFood(char * map){
@@ -35,8 +48,8 @@ void addRandomFood(char * map){
     while(tryAgain){
         int num = (rand() %
                    ((MAP_SIZE * MAP_SIZE)));
-        if(map[num] == '_'){
-            map[num] = '$';
+        if(map[num] == emptySpace){
+            map[num] = food;
             tryAgain = false;
         }
     }
@@ -60,44 +73,85 @@ void renderScreen(char * currentMap){
     
 }
 
-int findSnakeHead(char * map){
-    for(int i = 0; i < MAP_SIZE * MAP_SIZE; i++){
-        if(map[i] == '^'){
-            return i;
-        }
+void changeDirection(char newDirection){
+    if(newDirection == 'N' || newDirection == 'S' || newDirection == 'W' || newDirection == 'E'){
+        currentDirection = newDirection;
     }
-    return -1;
 }
 
 void step(char * map){
-    int snakeLocation = findSnakeHead(map);
+    int oldSnakeLocation = snakePositions[snakeHeadPosition];
+    int newSnakeLocation = oldSnakeLocation;
     
-    if(snakeLocation < 0 && snakeLocation >= MAP_SIZE * MAP_SIZE){
+    if(oldSnakeLocation < 0 && oldSnakeLocation >= MAP_SIZE * MAP_SIZE){
         gameProgress = 'L';
     } else if(currentDirection == 'N'){
-        if(snakeLocation - MAP_SIZE >= 0){
-            snakeLocation -= MAP_SIZE;
+        if(oldSnakeLocation - MAP_SIZE >= 0){
+            newSnakeLocation -= MAP_SIZE;
         } else {
             gameProgress = 'L';
         }
     } else if(currentDirection == 'S'){
-        if(snakeLocation + MAP_SIZE >= 0){
-            snakeLocation += MAP_SIZE;
+        if(oldSnakeLocation + MAP_SIZE < MAP_SIZE * MAP_SIZE){
+            newSnakeLocation += MAP_SIZE;
         } else {
             gameProgress = 'L';
         }
     } else if(currentDirection == 'W'){
-        if(snakeLocation%MAP_SIZE - 1 >= 0){
-            snakeLocation -= 1;
+        if(oldSnakeLocation%MAP_SIZE - 1 >= 0){
+            newSnakeLocation -= 1;
         } else {
             gameProgress = 'L';
         }
     } else if(currentDirection == 'E'){
-        if(snakeLocation%MAP_SIZE + 1 >= MAP_SIZE){
-            snakeLocation += 1;
+        if(oldSnakeLocation%MAP_SIZE + 1 < MAP_SIZE){
+            newSnakeLocation += 1;
         } else {
             gameProgress = 'L';
         }
+    }
+    
+    if(newSnakeLocation != oldSnakeLocation){
+        char newLocation = map[newSnakeLocation];
+        if(newLocation == emptySpace){
+            int temp1 = newSnakeLocation;
+            int temp2;
+            for(int i = 0; i < snakePositionLength; i++){
+                // +1 for head
+                temp2 = snakePositions[i];
+                map[temp2] = emptySpace;
+                snakePositions[i] = temp1;
+                if(i == 0){
+                    map[temp1] = snakeHead;
+                } else {
+                    map[temp1] = snakeBody;
+                }
+                temp1 = temp2;
+            }
+        }
+        else if(newLocation == food){
+            int temp1 = newSnakeLocation;
+            int temp2;
+            for(int i = 0; i < snakePositionLength + 1; i++){
+                // +1 for head
+                temp2 = snakePositions[i];
+                map[temp2] = emptySpace;
+                snakePositions[i] = temp1;
+                if(i == 0){
+                    map[temp1] = snakeHead;
+                } else {
+                    map[temp1] = snakeBody;
+                }
+                temp1 = temp2;
+            }
+            addRandomFood(map);
+            snakePositionLength++;
+            snakeLength++;
+        }
+    }
+    
+    if(snakeLength == winningLength){
+        gameProgress = 'W';
     }
 }
 
@@ -109,10 +163,29 @@ int main(int argc, const char * argv[]) {
     // seed for random generator
     srand(time(0));
     
+    for(int i = 0; i < winningLength + 1; i++){
+        snakePositions[i] = -1;
+    }
+    
     char * currentMap = createMap();
     addSnakeHead(currentMap);
     addRandomFood(currentMap);
-    renderScreen(currentMap);
+    bool keepGoing = true;
+    changeDirection('S');
+    while(keepGoing && gameProgress == 'P'){
+        renderScreen(currentMap);
+        step(currentMap);
+    }
+    
+    if(gameProgress == 'L'){
+        printf("you lost!");
+    } else {
+        printf("You won!");
+    }
+    printf("length is %d", snakeLength);
+    for(int i = 0; i < snakeLength + 1; i++){
+        printf("array[%i] is %i", i, snakePositions[i]);
+    }
     
     return 0;
 }
