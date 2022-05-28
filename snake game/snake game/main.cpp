@@ -12,7 +12,7 @@
 
 const int MAP_LENGTH = 11;
 const int MAP_SIZE = MAP_LENGTH * MAP_LENGTH;
-const int winningLength = 3;
+const int winningLength = 5;
 const int snakeHeadPosition = 0;
 const int startingSnakeLength = 1;
 const int snakePositionsLength = winningLength + 1;
@@ -21,8 +21,9 @@ const char snakeHead = '^';
 const char emptySpace = '_';
 const char food = '$';
 const char snakeBody = ';';
+const char defaultDirection = 'N';
 
-char currentDirection = 'N';
+char currentDirection = defaultDirection;
 char gameProgress = 'P';
 
 int snakeLength = startingSnakeLength;
@@ -37,10 +38,32 @@ void resetGame(char * map){
     
     gameProgress = 'P';
     snakeLength = startingSnakeLength;
-    
+    currentDirection = defaultDirection;
+
     snakePositions[snakeHeadPosition] = MAP_SIZE / 2;
     for(int i = 1; i < snakePositionsLength; i++){
         snakePositions[i] = emptySpace;
+    }
+}
+
+void useInputToChangeDirection(void){
+    bool retry = true;
+    while(retry){
+        char c = getchar();
+        
+        if(c == 'a'){
+            currentDirection = 'W';
+            retry = false;
+        } else if(c == 's'){
+            currentDirection = 'S';
+            retry = false;
+        } else if(c == 'd'){
+            currentDirection = 'E';
+            retry = false;
+        } else if(c == 'w'){
+            currentDirection = 'N';
+            retry = false;
+        }
     }
 }
 
@@ -191,17 +214,14 @@ int main(int argc, const char * argv[]) {
     changeDirection('S');
     while(keepGoing && gameProgress == 'P'){
         renderScreen(currentMap);
+        useInputToChangeDirection();
         step(currentMap);
     }
-    
+
     if(gameProgress == 'L'){
-        printf("you lost!");
+        printf("you lost!\n");
     } else {
-        printf("You won!");
-    }
-    printf("length is %d", snakeLength);
-    for(int i = 0; i < snakeLength + 1; i++){
-        printf("array[%i] is %i", i, snakePositions[i]);
+        printf("You won!\n");
     }
     
     return 0;
