@@ -1,0 +1,142 @@
+bool index = false;
+bool middle = false;
+bool ring = false;
+bool pinky = false;
+
+int indexLED = 12;
+int middleLED = 13;
+int ringLED = 11;
+int pinkyLED = 10;
+void setup() {
+  // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+
+  pinMode(OUTPUT,indexLED);
+  pinMode(OUTPUT,middleLED);
+  pinMode(OUTPUT,ringLED);
+  pinMode(OUTPUT,pinkyLED);
+  
+}
+
+// the loop routine runs over and over again forever:
+void loop() {
+  // read the input on analog pin 0:
+  float sensorValue0 = analogRead(A0);
+  
+  getFinger(sensorValue0);
+  if(index){
+    indexToPinky();
+  }
+  else if(middle)
+  { 
+    blinkFaster();
+  }
+  else if(ring)
+  {
+    flow();
+  }
+  else if(pinky)
+  {
+    pinkyToIndex();
+  }
+  index = false;
+  middle = false;
+  ring = false;
+  pinky = false;
+  
+  delay(200);
+  digitalWrite(indexLED, LOW); 
+  digitalWrite(middleLED, LOW); 
+  digitalWrite(ringLED, LOW); 
+  digitalWrite(pinkyLED, LOW); 
+}
+
+void getFinger(int sensorValue0)
+{
+  //thumb = 0
+  //index = 500-550
+  if(sensorValue0 > 500 && sensorValue0 < 550)
+  {
+    index = true;
+  }
+  //middle = 105-110
+  else if(sensorValue0 > 105 && sensorValue0 < 110)
+    {
+      middle = true;
+    }
+  ///ring = 95 - 104
+  else if(sensorValue0 > 95 && sensorValue0 < 104)
+    {
+      ring = true;
+    }
+  //pinky = 170- 185
+  else if(sensorValue0 > 170 && sensorValue0 < 185)
+    {
+      pinky = true;
+    }
+    
+}
+
+void indexToPinky()
+{
+  digitalWrite(indexLED, HIGH);
+  delay(200);
+  digitalWrite(middleLED, HIGH);
+  delay(200);
+  digitalWrite(ringLED, HIGH);
+  delay(200);
+  digitalWrite(pinkyLED, HIGH);
+  delay(200);
+}
+
+void blinkFaster()
+{
+  for(int i = 99; i > 0; i++)
+  {
+ 
+    digitalWrite(indexLED, LOW);
+    digitalWrite(middleLED, LOW);
+    digitalWrite(ringLED, LOW);
+    digitalWrite(pinkyLED, LOW);
+    delay(105 - i);
+    digitalWrite(indexLED, HIGH);
+    digitalWrite(middleLED, HIGH);
+    digitalWrite(ringLED, HIGH);
+    digitalWrite(pinkyLED, HIGH);
+    delay(5);
+  }
+}
+
+void flow()
+{
+  digitalWrite(indexLED, HIGH);
+  delay(200);
+  digitalWrite(middleLED, HIGH);
+  delay(200);
+  digitalWrite(ringLED, HIGH);
+  delay(200);
+  digitalWrite(pinkyLED, HIGH);
+  delay(200);
+
+  digitalWrite(pinkyLED, LOW);
+  delay(200);
+  digitalWrite(ringLED, LOW);
+  delay(200);
+  digitalWrite(middleLED, LOW);
+  delay(200);
+  digitalWrite(indexLED, LOW);
+  delay(200);
+}
+
+void pinkyToIndex()
+{
+  digitalWrite(pinkyLED, HIGH);
+  delay(200);
+  digitalWrite(ringLED, HIGH);
+  delay(200);
+  digitalWrite(middleLED, HIGH);
+  delay(200);
+  digitalWrite(indexLED, HIGH);
+  delay(200);
+}
+
