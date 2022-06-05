@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "neural_network.h"
+
 const int MAP_LENGTH = 11;
 const int MAP_SIZE = MAP_LENGTH * MAP_LENGTH;
 const int winningLength = 5;
@@ -113,10 +115,13 @@ void renderScreen(char * currentMap){
     
 }
 
-void changeDirection(char newDirection){
+bool changeDirection(char newDirection){
     if(newDirection == 'N' || newDirection == 'S' || newDirection == 'W' || newDirection == 'E'){
         currentDirection = newDirection;
+        return true;
     }
+    
+    return false;
 }
 
 void step(char * map){
@@ -195,19 +200,7 @@ void step(char * map){
     }
 }
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    
-    // Use current time as
-    // seed for random generator
-    srand(time(0));
-    
-    for(int i = 0; i < winningLength + 1; i++){
-        snakePositions[i] = -1;
-    }
-    
-    char * currentMap = createMap();
+void userPlayer(char * currentMap){
     addSnakeHead(currentMap);
     addRandomFood(currentMap);
     bool keepGoing = true;
@@ -217,6 +210,23 @@ int main(int argc, const char * argv[]) {
         useInputToChangeDirection();
         step(currentMap);
     }
+}
+
+void forMachineLearningTest(char * map){
+    //get surrounding values
+    const char possibleMoves[] = {'N','S','W','E'};
+    //
+}
+
+int main(int argc, const char * argv[]) {
+    srand(time(0));
+    printSomething();
+    for(int i = 0; i < winningLength + 1; i++){
+        snakePositions[i] = -1;
+    }
+    
+    char * currentMap = createMap();
+    userPlayer(currentMap);
 
     if(gameProgress == 'L'){
         printf("you lost!\n");
